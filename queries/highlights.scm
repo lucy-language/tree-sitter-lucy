@@ -1,23 +1,62 @@
+"return" @keyword.return
+"use" 	 @keyword.import
+"def"    @keyword.function
+"pkg"	 @keyword.type
+"as" 	 @keyword
+
 [
- "return"
  "global"
  "const"
- "pkg"
- "def"
- "use"
  "ext"
  "var"
- "as"
-] @keyword
+] @keyword.modifier
+
+(string)  @string
+(char) 	  @character
+(integer) @number
+(boolean) @boolean
 
 [
- (string)
- (char)
-] @string
-[
- (integer)
  (float)
  (double)
-] @number
+] @number.float
 
 (comment) @comment
+
+(type
+  "{"
+  (identifier) @type.builtin
+  .
+  (identifier) @type.builtin
+  "}"
+)
+
+(type
+  (identifier) @type.builtin
+)
+
+[
+ "("
+ ")"
+ "{"
+ "}"
+ "["
+ "]"
+] @punctuation.bracket
+
+(def
+  .
+  (def_name) @function
+  .
+)
+
+(pkg
+  .
+  (path) @module
+  .
+)
+
+(call
+  (def_name) @function.call
+  .
+)
