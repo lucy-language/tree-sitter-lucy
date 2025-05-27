@@ -1,0 +1,21 @@
+%"c" @linux_x86 @macos_x64;
+
+pkg test;
+
+ext int printf(str fmt, var str args);
+
+
+def {str, int} test()
+{
+    return "Kiana", 22;
+}
+
+def int main(str[] args)
+{
+    var {str, int} name, age = test();
+
+    printf("%s\n", name);
+    printf("%d\n", age);
+
+    return 0;
+}
