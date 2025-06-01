@@ -12,6 +12,8 @@
 ] @keyword.modifier
 
 (string)  @string
+(escape_sequence) @string.escape
+
 (char) 	  @character
 (integer) @number
 (boolean) @boolean

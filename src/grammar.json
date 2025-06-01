@@ -851,6 +851,89 @@
         }
       ]
     },
+    "string": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "\""
+        },
+        {
+          "type": "REPEAT",
+          "content": {
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "string_content"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "escape_sequence"
+              }
+            ]
+          }
+        },
+        {
+          "type": "STRING",
+          "value": "\""
+        }
+      ]
+    },
+    "char": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "'"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "PATTERN",
+              "value": "[^'\\\\]"
+            },
+            {
+              "type": "SYMBOL",
+              "name": "escape_sequence"
+            }
+          ]
+        },
+        {
+          "type": "STRING",
+          "value": "'"
+        }
+      ]
+    },
+    "string_content": {
+      "type": "PATTERN",
+      "value": "[^\"\\\\]+"
+    },
+    "escape_sequence": {
+      "type": "TOKEN",
+      "content": {
+        "type": "CHOICE",
+        "members": [
+          {
+            "type": "PATTERN",
+            "value": "\\\\[\\\\\"nrtbfv]"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\\\x[\\da-fA-F]{2}"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\\\u[\\da-fA-F]{4}"
+          },
+          {
+            "type": "PATTERN",
+            "value": "\\\\[0-7]{1,3}"
+          }
+        ]
+      }
+    },
     "comment": {
       "type": "TOKEN",
       "content": {
@@ -882,14 +965,6 @@
     "double": {
       "type": "PATTERN",
       "value": "(\\d+\\.\\d*|\\.\\d+)([eE][+-]?\\d+)?"
-    },
-    "string": {
-      "type": "PATTERN",
-      "value": "\"(?:[^\"\\\\]|\\\\.)*\""
-    },
-    "char": {
-      "type": "PATTERN",
-      "value": "'[^']*'"
     },
     "boolean": {
       "type": "PATTERN",

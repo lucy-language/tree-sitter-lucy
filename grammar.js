@@ -162,13 +162,36 @@ module.exports = grammar({
             $.expr,
             ";"
         ),
+        string: $ => seq(
+          '"',
+          repeat(choice(
+            $.string_content,
+            $.escape_sequence
+          )),
+          '"'
+        ),
+        char: $ => seq(
+          "'",
+          choice(
+            /[^'\\]/,
+            $.escape_sequence
+          ),
+          "'"
+        ),
+        string_content: $ => /[^"\\]+/,
+        escape_sequence: $ => token(choice(
+          /\\[\\"nrtbfv]/,
+          /\\x[\da-fA-F]{2}/,
+          /\\u[\da-fA-F]{4}/,
+          /\\[0-7]{1,3}/
+        )),
         comment: $ => token(seq("#", /[^\n\r]*/)),
         identifier: $ => /[A-Za-z][A-Za-z\d_]*/,
         integer: $ => /0[xX][\da-fA-F]+|\d+([eE][+-]?\d+)?/,
         float: $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?[fF]/,
         double: $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?/,
-        string: $ => /"(?:[^"\\]|\\.)*"/,
-        char: $ => /'[^']*'/,
+//         string: $ => /"(?:[^"\\]|\\.)*"/,
+//         char: $ => /'[^']*'/,
         boolean: $ => /true|false/,
     }
 });
