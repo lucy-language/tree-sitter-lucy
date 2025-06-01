@@ -167,7 +167,7 @@ module.exports = grammar({
         integer: $ => /0[xX][\da-fA-F]+|\d+([eE][+-]?\d+)?/,
         float: $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?[fF]/,
         double: $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?/,
-        string: $ => /"[^"]*"/,
+        string: $ => /"(?:[^"\\]|\\.)*"/,
         char: $ => /'[^']*'/,
         boolean: $ => /true|false/,
     }

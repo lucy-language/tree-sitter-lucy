@@ -885,7 +885,7 @@
     },
     "string": {
       "type": "PATTERN",
-      "value": "\"[^\"]*\""
+      "value": "\"(?:[^\"\\\\]|\\\\.)*\""
     },
     "char": {
       "type": "PATTERN",
