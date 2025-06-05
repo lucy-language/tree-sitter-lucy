@@ -18,6 +18,14 @@ def int main(str[] args)
     
     # var str example = "Hello, ${name + " ${name}"}";
 
+    if (name == "Kiana")
+    {
+        printf("%s\n", true);
+    } else if
+    {
+        printf("%s\n", false);
+    }
+
     printf("%s\n", name);
     printf("%d\n", age);
 

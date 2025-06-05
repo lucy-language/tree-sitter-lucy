@@ -40,7 +40,7 @@ module.exports = grammar({
             $.type,
             $.def_name,
             $.def_parameters,
-            $.def_body
+            $.body
         ),
         def_name: $ => seq(
             $.identifier,
@@ -63,7 +63,7 @@ module.exports = grammar({
             seq("{", $.identifier, repeat(seq(",", $.identifier)), "}"),
             seq($.identifier, optional(seq("[", "]")))
         ),
-        def_body: $ => seq(
+        body: $ => seq(
             "{",
             repeat($.def_statement),
             "}"
@@ -73,7 +73,8 @@ module.exports = grammar({
             $.return,
             seq($.call, ";"),
             $.var,
-            $.reassign
+            $.reassign,
+            $.if
         ),
         return: $ => seq(
             "return",
@@ -94,7 +95,7 @@ module.exports = grammar({
         ),
         binary: $ => seq(
             $.term,
-            choice("==", "!="),
+            choice("==", "!=", "+", "-", "*", "/"),
             $.term
         ),
         term: $ => choice(
@@ -161,6 +162,27 @@ module.exports = grammar({
             "=",
             $.expr,
             ";"
+        ),
+        if: $ => seq(
+            "if",
+            "(",
+            $.binary,
+            repeat(seq(
+              choice("||", "&&"),
+              $.binary
+            )),
+            ")",
+            $.body,
+            optional(
+              $.else
+            )
+        ),
+        else: $ => seq(
+            "else",
+            choice(
+                $.if,
+                $.body
+            )
         ),
         string: $ => seq(
           '"',

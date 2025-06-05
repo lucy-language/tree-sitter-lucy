@@ -5,6 +5,11 @@
 "as" 	 @keyword
 
 [
+ "if"
+ "else"
+] @keyword.conditional
+
+[
  "global"
  "const"
  "ext"
