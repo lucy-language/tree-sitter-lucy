@@ -18,14 +18,20 @@ module.exports = grammar({
             $.path,
             ";"
         ),
-        path: $ => seq(
+        path: $ => prec.left(1, seq(
             $.identifier,
-            repeat(seq(".", $.identifier))
-        ),
+            repeat(seq(
+                ".",
+                $.identifier
+            ))
+        )),
         use: $ => seq(
             "use",
             $.string,
-            optional(seq("as", $.identifier)),
+            optional(seq(
+                "as",
+                $.identifier
+            )),
             ";"
         ),
         statement: $ => choice(
@@ -33,7 +39,9 @@ module.exports = grammar({
             $.def,
             $.global,
             $.ext,
-            $.const
+            $.const,
+            $.struct,
+            $.macro
         ),
         def: $ => seq(
             "def",
@@ -44,13 +52,19 @@ module.exports = grammar({
         ),
         def_name: $ => seq(
             $.identifier,
-            optional(seq(".", $.identifier))
+            optional(seq(
+                ".",
+                $.identifier
+            ))
         ),
         def_parameters: $ => seq(
             "(",
             optional(seq(
                 $.parameter,
-                repeat(seq(",", $.parameter))
+                repeat(seq(
+                    ",",
+                    $.parameter
+                ))
             )),
             ")",
         ),
@@ -60,8 +74,22 @@ module.exports = grammar({
             $.identifier
         ),
         type: $ => choice(
-            seq("{", $.identifier, repeat(seq(",", $.identifier)), "}"),
-            seq($.identifier, optional(seq("[", "]")))
+            seq(
+                "{",
+                $.identifier,
+                repeat(seq(
+                    ",",
+                    $.identifier
+                )),
+                "}"
+            ),
+            seq(
+                $.identifier,
+                optional(seq(
+                    "[",
+                    "]"
+                ))
+            )
         ),
         body: $ => seq(
             "{",
@@ -71,16 +99,23 @@ module.exports = grammar({
         def_statement: $ => choice(
             $.comment,
             $.return,
-            seq($.call, ";"),
+            seq(
+                $.call,
+                ";"
+            ),
             $.var,
             $.reassign,
-            $.if
+            $.if,
+            $.while
         ),
         return: $ => seq(
             "return",
             optional(seq(
                 $.expr,
-                repeat(seq(",", $.expr))
+                repeat(seq(
+                    ",",
+                    $.expr
+                ))
             )),
             ";"
         ),
@@ -90,12 +125,25 @@ module.exports = grammar({
             $.term
         ),
         unary: $ => seq(
-            choice("!", "+", "-", "*", "/"),
+            choice(
+                "!",
+                "+",
+                "-",
+                "*",
+                "/"
+            ),
             $.term
         ),
         binary: $ => seq(
             $.term,
-            choice("==", "!=", "+", "-", "*", "/"),
+            choice(
+                "==",
+                "!=",
+                "+",
+                "-",
+                "*",
+                "/"
+            ),
             $.term
         ),
         term: $ => choice(
@@ -107,7 +155,13 @@ module.exports = grammar({
             $.boolean,
             $.call,
             $.identifier,
-            seq("(", $.expr, ")")
+            $.init,
+            $.access,
+            seq(
+                "(",
+                $.expr,
+                ")"
+            )
         ),
         call: $ => seq(
             $.def_name,
@@ -117,27 +171,63 @@ module.exports = grammar({
             "(",
             optional(seq(
                 $.argument,
-                repeat(seq(",", $.argument))
+                repeat(seq(
+                    ",",
+                    $.argument
+                ))
             )),
             ")"
         ),
         argument: $ => $.expr,
+        access: $ => seq(
+            $.identifier,
+            $.path,
+            seq(
+                ".",
+                choice(
+                    $.identifier,
+                    $.call
+                )
+            ),
+        ),
+        init: $ => seq(
+            "{",
+            optional($.expr),
+            repeat(seq(
+                ",",
+                $.expr
+            )),
+            "}"
+        ),
         var: $ => seq(
             "var",
             $.type,
             $.identifier,
-            repeat(seq(",", $.identifier)),
-            optional(seq("=", $.expr)),
+            repeat(seq(
+                ",",
+                $.identifier
+            )),
+            optional(seq(
+                "=",
+                $.expr
+            )),
             ";"
         ),
         global: $ => seq(
             "global",
-            choice($.ext, $.const, $.def)
+            choice(
+                $.ext,
+                $.const,
+                $.def
+            )
         ),
         ext: $ => seq(
             "ext",
             $.method,
-            optional(seq("as", $.identifier)),
+            optional(seq(
+                "as",
+                $.identifier
+            )),
             ";"
         ),
         method: $ => seq(
@@ -153,6 +243,40 @@ module.exports = grammar({
             $.expr,
             ";"
         ),
+        struct: $ => seq(
+            "struct",
+            $.identifier,
+            "{",
+            repeat(seq(
+                $.type,
+                $.identifier,
+                ";"
+            )),
+            "}"
+        ),
+        macro: $ => seq(
+            "macro",
+            optional($.type),
+            $.def_name,
+            $.macro_parameters,
+            $.body
+        ),
+        macro_parameters: $ => seq(
+            "(",
+            optional(seq(
+                $.macro_parameter,
+                repeat(seq(
+                    ",",
+                    $.parameter
+                ))
+            )),
+            ")",
+        ),
+        macro_parameter: $ => seq(
+            optional("var"),
+            optional($.type),
+            $.identifier
+        ),
         platform: $ => seq(
             "@",
             $.identifier
@@ -166,16 +290,20 @@ module.exports = grammar({
         if: $ => seq(
             "if",
             "(",
-            $.binary,
-            repeat(seq(
-              choice("||", "&&"),
-              $.binary
-            )),
+            $.condition,
             ")",
             $.body,
-            optional(
-              $.else
-            )
+            optional($.else)
+        ),
+        condition: $ => seq(
+            $.expr,
+            repeat(seq(
+                choice(
+                    "||",
+                    "&&"
+                ),
+                $.expr
+            ))
         ),
         else: $ => seq(
             "else",
@@ -184,36 +312,43 @@ module.exports = grammar({
                 $.body
             )
         ),
+        while: $ => seq(
+            "while",
+            "(",
+            $.condition,
+            ")"
+        ),
         string: $ => seq(
-          '"',
-          repeat(choice(
-            $.string_content,
-            $.escape_sequence
-          )),
-          '"'
+            '"',
+            repeat(choice(
+                $.string_content,
+                $.escape_sequence
+            )),
+            '"'
         ),
         char: $ => seq(
-          "'",
-          choice(
-            /[^'\\]/,
-            $.escape_sequence
-          ),
-          "'"
+            "'",
+            choice(
+                /[^'\\]/,
+                $.escape_sequence
+            ),
+            "'"
         ),
         string_content: $ => /[^"\\]+/,
         escape_sequence: $ => token(choice(
-          /\\[\\"nrtbfv]/,
-          /\\x[\da-fA-F]{2}/,
-          /\\u[\da-fA-F]{4}/,
-          /\\[0-7]{1,3}/
+            /\\[\\"nrtbfv]/,
+            /\\x[\da-fA-F]{2}/,
+            /\\u[\da-fA-F]{4}/,
+            /\\[0-7]{1,3}/
         )),
-        comment: $ => token(seq("#", /[^\n\r]*/)),
+        comment: $ => token(seq(
+            "#",
+            /[^\n\r]*/
+        )),
         identifier: $ => /[A-Za-z][A-Za-z\d_]*/,
         integer: $ => /0[xX][\da-fA-F]+|\d+([eE][+-]?\d+)?/,
         float: $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?[fF]/,
         double: $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?/,
-//         string: $ => /"(?:[^"\\]|\\.)*"/,
-//         char: $ => /'[^']*'/,
         boolean: $ => /true|false/,
     }
 });

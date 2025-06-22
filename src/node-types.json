@@ -1,5 +1,28 @@
 [
   {
+    "type": "access",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "call",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "path",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "argument",
     "named": true,
     "fields": {},
@@ -88,6 +111,21 @@
       "types": [
         {
           "type": "escape_sequence",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "condition",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "expr",
           "named": true
         }
       ]
@@ -204,6 +242,10 @@
         {
           "type": "var",
           "named": true
+        },
+        {
+          "type": "while",
+          "named": true
         }
       ]
     }
@@ -301,15 +343,30 @@
       "required": true,
       "types": [
         {
-          "type": "binary",
-          "named": true
-        },
-        {
           "type": "body",
           "named": true
         },
         {
+          "type": "condition",
+          "named": true
+        },
+        {
           "type": "else",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "init",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "expr",
           "named": true
         }
       ]
@@ -329,6 +386,71 @@
         },
         {
           "type": "string",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "macro",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "body",
+          "named": true
+        },
+        {
+          "type": "def_name",
+          "named": true
+        },
+        {
+          "type": "macro_parameters",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "macro_parameter",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "macro_parameters",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "macro_parameter",
+          "named": true
+        },
+        {
+          "type": "parameter",
           "named": true
         }
       ]
@@ -510,6 +632,14 @@
         {
           "type": "global",
           "named": true
+        },
+        {
+          "type": "macro",
+          "named": true
+        },
+        {
+          "type": "struct",
+          "named": true
         }
       ]
     }
@@ -534,6 +664,25 @@
     }
   },
   {
+    "type": "struct",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "term",
     "named": true,
     "fields": {},
@@ -541,6 +690,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "access",
+          "named": true
+        },
         {
           "type": "boolean",
           "named": true
@@ -567,6 +720,10 @@
         },
         {
           "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "init",
           "named": true
         },
         {
@@ -647,6 +804,21 @@
         },
         {
           "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "while",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "condition",
           "named": true
         }
       ]
@@ -789,6 +961,10 @@
     "named": true
   },
   {
+    "type": "macro",
+    "named": false
+  },
+  {
     "type": "pkg",
     "named": false
   },
@@ -801,11 +977,19 @@
     "named": true
   },
   {
+    "type": "struct",
+    "named": false
+  },
+  {
     "type": "use",
     "named": false
   },
   {
     "type": "var",
+    "named": false
+  },
+  {
+    "type": "while",
     "named": false
   },
   {
