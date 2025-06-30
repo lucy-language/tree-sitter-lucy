@@ -102,6 +102,21 @@
     }
   },
   {
+    "type": "case",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": false,
+      "types": [
+        {
+          "type": "def_statement",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "char",
     "named": true,
     "fields": {},
@@ -228,7 +243,15 @@
           "named": true
         },
         {
+          "type": "for",
+          "named": true
+        },
+        {
           "type": "if",
+          "named": true
+        },
+        {
+          "type": "inc",
           "named": true
         },
         {
@@ -237,6 +260,10 @@
         },
         {
           "type": "return",
+          "named": true
+        },
+        {
+          "type": "switch",
           "named": true
         },
         {
@@ -312,6 +339,37 @@
     }
   },
   {
+    "type": "for",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "body",
+          "named": true
+        },
+        {
+          "type": "condition",
+          "named": true
+        },
+        {
+          "type": "expr",
+          "named": true
+        },
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "global",
     "named": true,
     "fields": {},
@@ -352,6 +410,21 @@
         },
         {
           "type": "else",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "inc",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
           "named": true
         }
       ]
@@ -683,6 +756,25 @@
     }
   },
   {
+    "type": "switch",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "case",
+          "named": true
+        },
+        {
+          "type": "expr",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "term",
     "named": true,
     "fields": {},
@@ -829,6 +921,10 @@
     "named": false
   },
   {
+    "type": "!!",
+    "named": false
+  },
+  {
     "type": "!=",
     "named": false
   },
@@ -865,11 +961,19 @@
     "named": false
   },
   {
+    "type": "++",
+    "named": false
+  },
+  {
     "type": ",",
     "named": false
   },
   {
     "type": "-",
+    "named": false
+  },
+  {
+    "type": "--",
     "named": false
   },
   {
@@ -881,7 +985,19 @@
     "named": false
   },
   {
+    "type": ":",
+    "named": false
+  },
+  {
     "type": ";",
+    "named": false
+  },
+  {
+    "type": "<",
+    "named": false
+  },
+  {
+    "type": "<=",
     "named": false
   },
   {
@@ -890,6 +1006,14 @@
   },
   {
     "type": "==",
+    "named": false
+  },
+  {
+    "type": ">",
+    "named": false
+  },
+  {
+    "type": ">=",
     "named": false
   },
   {
@@ -911,6 +1035,10 @@
   {
     "type": "boolean",
     "named": true
+  },
+  {
+    "type": "case",
+    "named": false
   },
   {
     "type": "comment",
@@ -943,6 +1071,10 @@
   {
     "type": "float",
     "named": true
+  },
+  {
+    "type": "for",
+    "named": false
   },
   {
     "type": "global",
@@ -978,6 +1110,10 @@
   },
   {
     "type": "struct",
+    "named": false
+  },
+  {
+    "type": "switch",
     "named": false
   },
   {

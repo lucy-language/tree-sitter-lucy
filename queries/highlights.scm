@@ -1,21 +1,24 @@
 "return" @keyword.return
 "use" 	 @keyword.import
-"pkg"	 @keyword.type
+"pkg"	   @keyword.type
 
 [
     "def"
-	"macro"
+	  "macro"
 ] @keyword.function
 
 [
     "as"
-	"struct"
+	  "struct"
 ] @keyword
 
 [
     "if"
     "else"
-	"while"
+	  "while"
+	  "switch"
+	  "case"
+    "for"
 ] @keyword.conditional
 
 [
@@ -40,11 +43,11 @@
 (comment) @comment
 
 (type
-    "{"
+    "("
     (identifier) @type.builtin
     .
     (identifier) @type.builtin
-    "}"
+    ")"
 )
 
 (type

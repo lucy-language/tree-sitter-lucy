@@ -75,13 +75,13 @@ module.exports = grammar({
         ),
         type: $ => choice(
             seq(
-                "{",
+                "(",
                 $.identifier,
                 repeat(seq(
                     ",",
                     $.identifier
                 )),
-                "}"
+                ")"
             ),
             seq(
                 $.identifier,
@@ -103,10 +103,35 @@ module.exports = grammar({
                 $.call,
                 ";"
             ),
+            $.inc,
             $.var,
             $.reassign,
             $.if,
-            $.while
+            $.while,
+            $.switch,
+            $.for
+        ),
+        inc: $ => seq(
+            $.identifier,
+            choice(
+                "++",
+                "--",
+                "!!"
+            )
+        ),
+        for: $ => seq(
+            "for",
+            "(",
+            $.type,
+            $.identifier,
+            "=",
+            $.condition,
+            ";",
+            $.condition,
+            ";",
+            $.expr,
+            ")",
+            $.body
         ),
         return: $ => seq(
             "return",
@@ -142,7 +167,11 @@ module.exports = grammar({
                 "+",
                 "-",
                 "*",
-                "/"
+                "/",
+                "<",
+                ">",
+                "<=",
+                ">="
             ),
             $.term
         ),
@@ -317,6 +346,20 @@ module.exports = grammar({
             "(",
             $.condition,
             ")"
+        ),
+        switch: $ => seq(
+            "switch",
+            "(",
+            $.expr,
+            ")",
+            "{",
+            repeat($.case),
+            "}"
+        ),
+        case: $ => seq(
+            "case",
+            ":",
+            repeat($.def_statement)
         ),
         string: $ => seq(
             '"',
