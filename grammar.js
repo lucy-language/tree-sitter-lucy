@@ -2,15 +2,15 @@ module.exports = grammar({
     name: "lucy",
     rules: {
         source_file: $ => seq(
-            repeat($.linker_option),
+            repeat($.link),
             $.pkg,
-            repeat($.use),
             repeat($.statement)
         ),
-        linker_option: $ => seq(
-            "%",
-            $.string,
-            repeat($.platform),
+        link: $ => seq(
+            "link",
+            "<",
+            $.IDENTIFIER,
+            ">",
             ";"
         ),
         pkg: $ => seq(
@@ -19,45 +19,37 @@ module.exports = grammar({
             ";"
         ),
         path: $ => prec.left(1, seq(
-            $.identifier,
+            $.IDENTIFIER,
             repeat(seq(
                 ".",
-                $.identifier
+                $.IDENTIFIER
             ))
         )),
-        use: $ => seq(
-            "use",
-            $.string,
-            optional(seq(
-                "as",
-                $.identifier
-            )),
-            ";"
-        ),
         statement: $ => choice(
-            $.comment,
+            $.use,
             $.def,
-            $.global,
             $.ext,
             $.const,
-            $.struct,
-            $.macro
+            $.macro,
+            $.struct
+        ),
+        use: $ => seq(
+            "use",
+            $.path,
+            ";"
         ),
         def: $ => seq(
             "def",
             $.type,
-            $.def_name,
-            $.def_parameters,
+            $.IDENTIFIER,
+            $.parameters,
             $.body
         ),
-        def_name: $ => seq(
-            $.identifier,
-            optional(seq(
-                ".",
-                $.identifier
-            ))
+        type: $ => choice(
+            $.tuple_type,
+            $.IDENTIFIER
         ),
-        def_parameters: $ => seq(
+        parameters: $ => seq(
             "(",
             optional(seq(
                 $.parameter,
@@ -70,287 +62,214 @@ module.exports = grammar({
         ),
         parameter: $ => seq(
             optional("var"),
-            $.type,
-            $.identifier
-        ),
-        type: $ => choice(
-            seq(
-                "(",
-                $.identifier,
-                repeat(seq(
-                    ",",
-                    $.identifier
-                )),
-                ")"
-            ),
-            seq(
-                $.identifier,
-                optional(seq(
-                    "[",
-                    "]"
-                ))
-            )
+            optional($.type),
+            $.IDENTIFIER
         ),
         body: $ => seq(
             "{",
-            repeat($.def_statement),
+            repeat($.body_statement),
             "}"
         ),
-        def_statement: $ => choice(
-            $.comment,
-            $.return,
-            seq(
-                $.call,
-                ";"
-            ),
-            $.inc,
-            $.var,
-            $.reassign,
+        body_statement: $ => choice(
             $.if,
+            $.var,
+            $.for,
             $.while,
+            $.return,
             $.switch,
-            $.for
+            seq(
+                $.identifier,
+                ";"
+            )
+        ),
+        identifier: $ => choice(
+            $.call,
+            $.access,
+            $.reassign,
+            $.inc,
+            $.IDENTIFIER
+        ),
+        ext: $ => seq(
+            "ext",
+            $.type,
+            $.IDENTIFIER,
+            $.parameters,
+            optional(seq(
+                "as",
+                $.IDENTIFIER
+            )),
+            ";"
+        ),
+        struct: $ => seq(
+            "struct",
+            $.IDENTIFIER,
+            $.struct_fields
+        ),
+        struct_fields: $ => seq(
+            "{",
+            repeat($.struct_field),
+            "}"
+        ),
+        struct_field: $ => seq(
+            $.type,
+            $.IDENTIFIER,
+            ";"
+        ),
+        var: $ => seq(
+            "var",
+            $.type,
+            $.IDENTIFIER,
+            repeat(seq(
+                ",",
+                $.IDENTIFIER
+            )),
+            "=",
+            $.expression,
+            ";"
+        ),
+        expression: $ => choice(
+            prec.left(1, seq(
+                $.expression,
+                choice(
+                    "+",
+                    "-",
+                    "*",
+                    "/",
+                    "==",
+                    "!=",
+                    ">=",
+                    "<=",
+                    ">",
+                    "<",
+                    "&&",
+                    "||"
+                ),
+                $.expression
+            )),
+            $.term
+        ),
+        term: $ => choice(
+            $.CHAR,
+            $.FLOAT,
+            $.init,
+            $.DOUBLE,
+            $.STRING,
+            seq(
+                "(",
+                $.expression,
+                ")"
+            ),
+            $.BOOLEAN,
+            $.INTEGER,
+            $.identifier
+        ),
+        init: $ => seq(
+            "{",
+            repeat(seq(
+                $.init_value,
+                repeat(seq(
+                    ",",
+                    $.init_value
+                ))
+            )),
+            "}"
+        ),
+        init_value: $ => seq(
+            optional(seq(
+                ".",
+                $.IDENTIFIER,
+                "="
+            )),
+            $.expression
+        ),
+        tuple_type: $ => seq(
+            "(",
+            $.type,
+            repeat(seq(
+                ",",
+                $.type
+            )),
+            ")"
+        ),
+        call: $ => prec(3, seq(
+            $.IDENTIFIER,
+            $.arguments
+        )),
+        arguments: $ => seq(
+            "(",
+            repeat(seq(
+                $.expression,
+                repeat(seq(
+                    ",",
+                    $.expression
+                ))
+            )),
+            ")"
+        ),
+        access: $ => prec(2, seq(
+            $.IDENTIFIER,
+            ".",
+            $.identifier
+        )),
+        while: $ => seq(
+            "while",
+            "(",
+            $.expression,
+            ")",
+            $.body
+        ),
+        reassign: $ => seq(
+            $.IDENTIFIER,
+            "=",
+            $.expression
+        ),
+        for: $ => seq(
+            "for",
+            "(",
+            $.var,
+            $.expression,
+            ";",
+            $.expression,
+            ")",
+            $.body
         ),
         inc: $ => seq(
-            $.identifier,
+            $.IDENTIFIER,
             choice(
                 "++",
                 "--",
                 "!!"
             )
         ),
-        for: $ => seq(
-            "for",
-            "(",
-            $.type,
-            $.identifier,
-            "=",
-            $.condition,
-            ";",
-            $.condition,
-            ";",
-            $.expr,
-            ")",
-            $.body
-        ),
         return: $ => seq(
             "return",
             optional(seq(
-                $.expr,
+                $.expression,
                 repeat(seq(
                     ",",
-                    $.expr
+                    $.expression
                 ))
             )),
-            ";"
-        ),
-        expr: $ => choice(
-            $.unary,
-            $.binary,
-            $.term
-        ),
-        unary: $ => seq(
-            choice(
-                "!",
-                "+",
-                "-",
-                "*",
-                "/"
-            ),
-            $.term
-        ),
-        binary: $ => seq(
-            $.term,
-            choice(
-                "==",
-                "!=",
-                "+",
-                "-",
-                "*",
-                "/",
-                "<",
-                ">",
-                "<=",
-                ">="
-            ),
-            $.term
-        ),
-        term: $ => choice(
-            $.integer,
-            $.float,
-            $.double,
-            $.string,
-            $.char,
-            $.boolean,
-            $.call,
-            $.identifier,
-            $.init,
-            $.access,
-            seq(
-                "(",
-                $.expr,
-                ")"
-            )
-        ),
-        call: $ => seq(
-            $.def_name,
-            $.call_arguments
-        ),
-        call_arguments: $ => seq(
-            "(",
-            optional(seq(
-                $.argument,
-                repeat(seq(
-                    ",",
-                    $.argument
-                ))
-            )),
-            ")"
-        ),
-        argument: $ => $.expr,
-        access: $ => seq(
-            $.identifier,
-            $.path,
-            seq(
-                ".",
-                choice(
-                    $.identifier,
-                    $.call
-                )
-            ),
-        ),
-        init: $ => seq(
-            "{",
-            optional($.expr),
-            repeat(seq(
-                ",",
-                $.expr
-            )),
-            "}"
-        ),
-        var: $ => seq(
-            "var",
-            $.type,
-            $.identifier,
-            repeat(seq(
-                ",",
-                $.identifier
-            )),
-            optional(seq(
-                "=",
-                $.expr
-            )),
-            ";"
-        ),
-        global: $ => seq(
-            "global",
-            choice(
-                $.ext,
-                $.const,
-                $.def
-            )
-        ),
-        ext: $ => seq(
-            "ext",
-            $.method,
-            optional(seq(
-                "as",
-                $.identifier
-            )),
-            ";"
-        ),
-        method: $ => seq(
-            $.type,
-            $.identifier,
-            $.def_parameters
-        ),
-        const: $ => seq(
-            "const",
-            $.type,
-            $.identifier,
-            "=",
-            $.expr,
-            ";"
-        ),
-        struct: $ => seq(
-            "struct",
-            $.identifier,
-            "{",
-            repeat(seq(
-                $.type,
-                $.identifier,
-                ";"
-            )),
-            "}"
-        ),
-        macro: $ => seq(
-            "macro",
-            optional($.type),
-            $.def_name,
-            $.macro_parameters,
-            $.body
-        ),
-        macro_parameters: $ => seq(
-            "(",
-            optional(seq(
-                $.macro_parameter,
-                repeat(seq(
-                    ",",
-                    $.parameter
-                ))
-            )),
-            ")",
-        ),
-        macro_parameter: $ => seq(
-            optional("var"),
-            optional($.type),
-            $.identifier
-        ),
-        platform: $ => seq(
-            "@",
-            $.identifier
-        ),
-        reassign: $ => seq(
-            $.identifier,
-            "=",
-            $.expr,
             ";"
         ),
         if: $ => seq(
             "if",
             "(",
-            $.condition,
+            $.expression,
             ")",
             $.body,
-            optional($.else)
-        ),
-        condition: $ => seq(
-            $.expr,
-            repeat(seq(
+            optional(seq(
+                "else",
                 choice(
-                    "||",
-                    "&&"
-                ),
-                $.expr
+                    $.if,
+                    $.body
+                )
             ))
-        ),
-        else: $ => seq(
-            "else",
-            choice(
-                $.if,
-                $.body
-            )
-        ),
-        while: $ => seq(
-            "while",
-            "(",
-            $.condition,
-            ")"
         ),
         switch: $ => seq(
             "switch",
             "(",
-            $.expr,
+            $.expression,
             ")",
             "{",
             repeat($.case),
@@ -358,10 +277,30 @@ module.exports = grammar({
         ),
         case: $ => seq(
             "case",
+            $.expression,
             ":",
-            repeat($.def_statement)
+            repeat($.body_statement)
         ),
-        string: $ => seq(
+        const: $ => seq(
+            "const",
+            $.type,
+            $.IDENTIFIER,
+            "=",
+            $.expression,
+            ";"
+        ),
+        macro: $ => seq(
+            "macro",
+            $.type,
+            $.IDENTIFIER,
+            $.parameters,
+            $.body
+        ),
+        BOOLEAN: $ => choice(
+            "true",
+            "false"
+        ),
+        STRING: $ => seq(
             '"',
             repeat(choice(
                 $.string_content,
@@ -369,29 +308,29 @@ module.exports = grammar({
             )),
             '"'
         ),
-        char: $ => seq(
+        CHAR: $ => seq(
             "'",
             choice(
-                /[^'\\]/,
+                $.char_content,
                 $.escape_sequence
             ),
             "'"
         ),
         string_content: $ => /[^"\\]+/,
+        char_content:   $ => /[^'\\]/,
         escape_sequence: $ => token(choice(
             /\\[\\"nrtbfv]/,
             /\\x[\da-fA-F]{2}/,
             /\\u[\da-fA-F]{4}/,
             /\\[0-7]{1,3}/
         )),
-        comment: $ => token(seq(
+        COMMENT: $ => token(seq(
             "#",
             /[^\n\r]*/
         )),
-        identifier: $ => /[A-Za-z][A-Za-z\d_]*/,
-        integer: $ => /0[xX][\da-fA-F]+|\d+([eE][+-]?\d+)?/,
-        float: $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?[fF]/,
-        double: $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?/,
-        boolean: $ => /true|false/,
+        IDENTIFIER: $ => /[A-Za-z][A-Za-z\d_]*/,
+        INTEGER:    $ => /0[xX][\da-fA-F]+|\d+([eE][+-]?\d+)?/,
+        FLOAT:      $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?[fF]/,
+        DOUBLE:     $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?/,
     }
 });

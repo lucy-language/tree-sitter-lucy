@@ -1,57 +1,69 @@
 "return" @keyword.return
-"use" 	 @keyword.import
-"pkg"	   @keyword.type
+"use"    @keyword.import
+"pkg"    @keyword.type
 
 [
     "def"
-	  "macro"
+    "macro"
 ] @keyword.function
 
 [
     "as"
-	  "struct"
+    "struct"
+    "link"
 ] @keyword
 
 [
     "if"
     "else"
-	  "while"
-	  "switch"
-	  "case"
+    "while"
+    "switch"
+    "case"
     "for"
 ] @keyword.conditional
 
 [
-    "global"
     "const"
     "ext"
     "var"
 ] @keyword.modifier
 
-(string)  @string
-(escape_sequence) @string.escape
+[
+    "true"
+    "false"
+] @boolean
 
-(char) 	  @character
-(integer) @number
-(boolean) @boolean
+"." @punctuation.delimiter
 
 [
-   (float)
-   (double)
+    "=="
+	"!="
+	"&&"
+	"||"
+	">="
+	"<="
+	">"
+	"<"
+	"+"
+	"-"
+	"*"
+	"/"
+] @operator
+
+(STRING) @string
+(escape_sequence) @string.escape
+
+(CHAR) @character
+(INTEGER) @number
+(BOOLEAN) @boolean
+
+[
+   (FLOAT)
+   (DOUBLE)
 ] @number.float
 
-(comment) @comment
-
 (type
-    "("
-    (identifier) @type.builtin
-    .
-    (identifier) @type.builtin
-    ")"
-)
-
-(type
-    (identifier) @type.builtin
+    (IDENTIFIER) @type.builtin
 )
 
 [
@@ -59,27 +71,89 @@
    ")"
    "{"
    "}"
-   "["
-   "]"
+;    "["
+;    "]"
 ] @punctuation.bracket
 
 (def
-    .
-    (def_name) @function
-    .
+    (IDENTIFIER) @function
+)
+
+(macro
+    (IDENTIFIER) @function
 )
 
 (pkg
-    .
-    (path) @module
-    .
+    (path) @namespace
+)
+
+(use
+    (path) @namespace
 )
 
 (call
-    (def_name (identifier) @function.call)
-    .
+    (IDENTIFIER) @function.call
+)
+
+(link
+    (IDENTIFIER) @namespace
+)
+
+(struct
+    (IDENTIFIER) @type
+)
+
+(struct_field
+    (IDENTIFIER) @property
+)
+
+(parameter
+    (IDENTIFIER) @parameter
+)
+
+(var
+    (IDENTIFIER) @variable
+)
+
+(const
+    (IDENTIFIER) @constant
+)
+
+(inc
+    (IDENTIFIER) @variable
+)
+
+(reassign
+    (IDENTIFIER) @variable
+)
+
+(
+    (IDENTIFIER) @constant
+    (#match? @constant "^[A-Z][A-Z0-9_]*$")
 )
 
 (access
-    (path (identifier) @keyword)
+    (IDENTIFIER) @property
+    "." @punctuation.delimiter
+    (identifier) @identifier
+)
+
+(access
+    (IDENTIFIER) @property
+    "." @punctuation.delimiter
+    (identifier) @constant
+    (#match? @constant "^[A-Z][A-Z0-9_]*$")
+)
+
+(ext
+    (IDENTIFIER) @function
+    (parameters)
+    "as" @keyword
+    (IDENTIFIER) @property
+)
+
+(ext
+    (IDENTIFIER) @function
+    (parameters)
+    .
 )
