@@ -24,6 +24,11 @@
     }
   },
   {
+    "type": "COMMENT",
+    "named": true,
+    "fields": {}
+  },
+  {
     "type": "STRING",
     "named": true,
     "fields": {},
@@ -99,6 +104,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "COMMENT",
+          "named": true
+        },
         {
           "type": "for",
           "named": true
@@ -536,6 +545,10 @@
       "required": true,
       "types": [
         {
+          "type": "COMMENT",
+          "named": true
+        },
+        {
           "type": "link",
           "named": true
         },
@@ -558,6 +571,10 @@
       "multiple": false,
       "required": true,
       "types": [
+        {
+          "type": "COMMENT",
+          "named": true
+        },
         {
           "type": "const",
           "named": true
@@ -631,6 +648,10 @@
       "multiple": true,
       "required": false,
       "types": [
+        {
+          "type": "COMMENT",
+          "named": true
+        },
         {
           "type": "struct_field",
           "named": true
@@ -805,6 +826,10 @@
   },
   {
     "type": "\"",
+    "named": false
+  },
+  {
+    "type": "#",
     "named": false
   },
   {

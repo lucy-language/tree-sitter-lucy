@@ -2,6 +2,7 @@ module.exports = grammar({
     name: "lucy",
     rules: {
         source_file: $ => seq(
+            optional(repeat($.COMMENT)),
             repeat($.link),
             $.pkg,
             repeat($.statement)
@@ -11,7 +12,7 @@ module.exports = grammar({
             "<",
             $.IDENTIFIER,
             ">",
-            ";"
+            ";",
         ),
         pkg: $ => seq(
             "pkg",
@@ -31,7 +32,8 @@ module.exports = grammar({
             $.ext,
             $.const,
             $.macro,
-            $.struct
+            $.struct,
+            $.COMMENT
         ),
         use: $ => seq(
             "use",
@@ -80,7 +82,8 @@ module.exports = grammar({
             seq(
                 $.identifier,
                 ";"
-            )
+            ),
+            $.COMMENT
         ),
         identifier: $ => choice(
             $.call,
@@ -107,7 +110,10 @@ module.exports = grammar({
         ),
         struct_fields: $ => seq(
             "{",
-            repeat($.struct_field),
+            repeat(choice(
+                $.struct_field,
+                $.COMMENT
+            )),
             "}"
         ),
         struct_field: $ => seq(
@@ -324,10 +330,10 @@ module.exports = grammar({
             /\\u[\da-fA-F]{4}/,
             /\\[0-7]{1,3}/
         )),
-        COMMENT: $ => token(seq(
+        COMMENT: $ => seq(
             "#",
             /[^\n\r]*/
-        )),
+        ),
         IDENTIFIER: $ => /[A-Za-z][A-Za-z\d_]*/,
         INTEGER:    $ => /0[xX][\da-fA-F]+|\d+([eE][+-]?\d+)?/,
         FLOAT:      $ => /(\d+\.\d*|\.\d+)([eE][+-]?\d+)?[fF]/,

@@ -6,6 +6,21 @@
       "type": "SEQ",
       "members": [
         {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "REPEAT",
+              "content": {
+                "type": "SYMBOL",
+                "name": "COMMENT"
+              }
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
+        },
+        {
           "type": "REPEAT",
           "content": {
             "type": "SYMBOL",
@@ -122,6 +137,10 @@
         {
           "type": "SYMBOL",
           "name": "struct"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "COMMENT"
         }
       ]
     },
@@ -318,6 +337,10 @@
               "value": ";"
             }
           ]
+        },
+        {
+          "type": "SYMBOL",
+          "name": "COMMENT"
         }
       ]
     },
@@ -419,8 +442,17 @@
         {
           "type": "REPEAT",
           "content": {
-            "type": "SYMBOL",
-            "name": "struct_field"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "struct_field"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "COMMENT"
+              }
+            ]
           }
         },
         {
@@ -1232,20 +1264,17 @@
       }
     },
     "COMMENT": {
-      "type": "TOKEN",
-      "content": {
-        "type": "SEQ",
-        "members": [
-          {
-            "type": "STRING",
-            "value": "#"
-          },
-          {
-            "type": "PATTERN",
-            "value": "[^\\n\\r]*"
-          }
-        ]
-      }
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#"
+        },
+        {
+          "type": "PATTERN",
+          "value": "[^\\n\\r]*"
+        }
+      ]
     },
     "IDENTIFIER": {
       "type": "PATTERN",

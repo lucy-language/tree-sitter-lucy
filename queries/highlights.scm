@@ -36,7 +36,7 @@
 "." @punctuation.delimiter
 
 [
-    "=="
+  "=="
 	"!="
 	"&&"
 	"||"
@@ -131,6 +131,8 @@
     (IDENTIFIER) @constant
     (#match? @constant "^[A-Z][A-Z0-9_]*$")
 )
+
+(COMMENT) @comment
 
 (access
     (IDENTIFIER) @property
