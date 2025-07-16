@@ -56,6 +56,10 @@
       "required": true,
       "types": [
         {
+          "type": "BUILTIN_FIELD",
+          "named": true
+        },
+        {
           "type": "IDENTIFIER",
           "named": true
         },
@@ -691,6 +695,10 @@
           "named": true
         },
         {
+          "type": "BUILTIN_VAR",
+          "named": true
+        },
+        {
           "type": "CHAR",
           "named": true
         },
@@ -911,6 +919,14 @@
   {
     "type": ">=",
     "named": false
+  },
+  {
+    "type": "BUILTIN_FIELD",
+    "named": true
+  },
+  {
+    "type": "BUILTIN_VAR",
+    "named": true
   },
   {
     "type": "DOUBLE",

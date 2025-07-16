@@ -653,6 +653,10 @@
         {
           "type": "SYMBOL",
           "name": "identifier"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "BUILTIN_VAR"
         }
       ]
     },
@@ -837,8 +841,17 @@
             "value": "."
           },
           {
-            "type": "SYMBOL",
-            "name": "identifier"
+            "type": "CHOICE",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "BUILTIN_FIELD"
+              },
+              {
+                "type": "SYMBOL",
+                "name": "identifier"
+              }
+            ]
           }
         ]
       }
@@ -1162,6 +1175,14 @@
           "name": "body"
         }
       ]
+    },
+    "BUILTIN_VAR": {
+      "type": "PATTERN",
+      "value": "\\$[A-Z][A-Z_]*"
+    },
+    "BUILTIN_FIELD": {
+      "type": "PATTERN",
+      "value": "\\$[a-z][a-z_]*"
     },
     "BOOLEAN": {
       "type": "CHOICE",

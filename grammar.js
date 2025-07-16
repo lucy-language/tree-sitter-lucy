@@ -167,7 +167,8 @@ module.exports = grammar({
             ),
             $.BOOLEAN,
             $.INTEGER,
-            $.identifier
+            $.identifier,
+            $.BUILTIN_VAR
         ),
         init: $ => seq(
             "{",
@@ -215,7 +216,10 @@ module.exports = grammar({
         access: $ => prec(2, seq(
             $.IDENTIFIER,
             ".",
-            $.identifier
+            choice(
+                $.BUILTIN_FIELD,
+                $.identifier
+            )
         )),
         while: $ => seq(
             "while",
@@ -302,6 +306,8 @@ module.exports = grammar({
             $.parameters,
             $.body
         ),
+        BUILTIN_VAR: $ => /\$[A-Z][A-Z_]*/,
+        BUILTIN_FIELD: $ => /\$[a-z][a-z_]*/,
         BOOLEAN: $ => choice(
             "true",
             "false"

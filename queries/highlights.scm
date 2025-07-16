@@ -142,6 +142,12 @@
 
 (access
     (IDENTIFIER) @property
+	"." @punctuation.delimiter
+	(BUILTIN_FIELD) @parameter
+)
+
+(access
+    (IDENTIFIER) @property
     "." @punctuation.delimiter
     (identifier) @constant
     (#match? @constant "^[A-Z][A-Z0-9_]*$")
@@ -159,3 +165,5 @@
     (parameters)
     .
 )
+
+(BUILTIN_VAR) @parameter
